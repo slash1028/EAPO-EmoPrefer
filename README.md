@@ -11,13 +11,13 @@ The following counts use the same convention as the paper.
 | Dataset | Role | Preference pairs |
 |---|---|---:|
 | EmoPrefer-Data-V2 | Normal training | 1,618 |
-| EAPO Error-Aug Train-Set | Error-augmented training | 4,526 |
+| EAPO Error-Aug Train-Set | Error-augmented training | 2,908 |
 | EmoPrefer-Data | Original validation | 563 |
 | EAPO Error-Aug Val-Set | Controlled-error validation | 944 |
 | MER-Prefer Test Stage 1 | Official test evaluation | 379 |
 | MER-Prefer Test Stage 2 | Official test evaluation | 515 |
 
-The error-augmented training set combines the original training preference pairs with accepted controlled negatives. The validation set contains the accepted controlled-error pairs used to report the four-error diagnostic results.
+The Error-Aug Train-Set and Error-Aug Val-Set contain only the newly generated controlled-error pairs and are separate from the original EmoPrefer pairs. Error-augmented training adds the 2,908 generated training pairs to the 1,618 original training pairs. The 944 generated validation pairs are used to report the four-error diagnostic results.
 
 ## Controlled Error Types
 

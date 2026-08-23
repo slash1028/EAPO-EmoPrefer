@@ -34,7 +34,7 @@ The quality score is an ordinal verifier judgment, not a calibrated probability 
 
 ## Dataset Statistics
 
-Following the paper's reporting convention, EmoPrefer-Data-V2 contains 1,618 original training pairs, the EAPO error-augmented training set contains 4,526 pairs, EmoPrefer-Data contains 563 original validation pairs, and the controlled-error validation set contains 944 generated pairs. Detailed machine-readable counts are available in `data/*/statistics.json`.
+Following the paper's reporting convention, EmoPrefer-Data-V2 contains 1,618 original training pairs, the separate Error-Aug Train-Set contains 2,908 generated pairs, EmoPrefer-Data contains 563 original validation pairs, and the separate Error-Aug Val-Set contains 944 generated pairs. Detailed machine-readable counts are available in `data/*/statistics.json`.
 
 ## Intended Uses
 
