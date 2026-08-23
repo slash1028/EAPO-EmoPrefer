@@ -70,28 +70,28 @@ The table below reports representative validation results from the paper in weig
 
 | Model | Training setting | Orig. Val | 4-Error Avg | Swap Cons |
 |---|---|---:|---:|---:|
-| MiniCPM-o-2.6-8B | S1 Zero-shot | 59.48 | 88.46 | 81.94 |
-| MiniCPM-o-2.6-8B | S1 Error-Aug SFT+DPO | 63.27 | 92.40 | 87.46 |
-| Qwen2.5-Omni-7B | S2 Zero-shot | 65.53 | 78.97 | 70.42 |
-| Qwen2.5-Omni-7B | S2 Error-Aug SFT+DPO | 79.75 | 90.97 | 84.21 |
-| Qwen3-Omni-30B-A3B-Instruct | S2 Zero-shot | 73.18 | 93.82 | 91.55 |
-| **Qwen3-Omni-30B-A3B-Instruct** | **S2 Error-Aug SFT+DPO** | **79.04** | **95.82** | **94.13** |
-| **EAPO calibrated fusion** | **Judges 16+19+21** | **80.82** | 94.35 | 91.41 |
+| MiniCPM-o-2.6-8B | S1 Zero-shot | 61.53 | 69.46 | 53.50 |
+| MiniCPM-o-2.6-8B | S1 Error-Aug SFT+DPO | 73.89 | **86.09** | 76.27 |
+| Qwen2.5-Omni-7B | S2 Zero-shot | 68.17 | 58.01 | 34.96 |
+| Qwen2.5-Omni-7B | S2 Error-Aug SFT+DPO | 78.29 | 76.89 | 65.36 |
+| Qwen3-Omni-30B-A3B-Instruct | S2 Zero-shot | 73.43 | 70.15 | 54.13 |
+| Qwen3-Omni-30B-A3B-Instruct | S2 Error-Aug SFT+DPO | 79.04 | 83.91 | 75.74 |
+| **EAPO calibrated fusion** | **Judges 11+14+21** | **80.31** | 85.35 | **76.38** |
 
 For Qwen3, error-augmented SFT followed by DPO obtains the strongest controlled-error performance:
 
 | Emotion Flip | Intensity Mismatch | Evidence Contradiction | Modality Omission | 4-Error Avg |
 |---:|---:|---:|---:|---:|
-| 94.22 | 94.57 | 98.04 | 96.44 | **95.82** |
+| 95.74 | 71.48 | 75.70 | 92.73 | **83.91** |
 
 On the official test sets, the paper combines Judges 11, 16, and 21. Scale normalization improves both stages over raw-margin averaging and yields the strongest Macro WAF.
 
 | Official test system | Judges | Stage 1 | Stage 2 | Macro |
 |---|---|---:|---:|---:|
-| Best single judge: Qwen3 S2 Zero-shot | Judge 17 | 90.07 | 68.44 | 79.26 |
-| Hard Voting | 11+16+21 | 88.85 | 68.88 | 78.86 |
-| Raw Fusion | 11+16+21 | 90.42 | 69.07 | 79.75 |
-| **EAPO normalized fusion** | **11+16+21** | **91.56** | **69.51** | **80.54** |
+| Best single judge: Qwen3 Error-Aug SFT+DPO | Judge 21 | 90.25 | 68.56 | 79.40 |
+| Hard Voting | 11+16+21 | 88.93 | 68.02 | 78.47 |
+| Raw Fusion | 11+16+21 | 89.98 | 68.63 | 79.31 |
+| **EAPO normalized fusion** | **11+16+21** | **91.30** | **69.17** | **80.23** |
 
 The complete validation and official test tables are reproduced in [docs/RESULTS.md](docs/RESULTS.md). All numbers in this repository are transcribed from the paper's camera-ready manuscript.
 
