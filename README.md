@@ -1,8 +1,26 @@
-# EAPO-EmoPrefer
+<h1 align="center">EAPO-EmoPrefer</h1>
+
+<p align="center">
+  <strong>Controlled Error-Augmented Preference Data for Reliable Multimodal Emotion Judging</strong>
+</p>
+
+<p align="center">
+  <a href="#dataset-composition">Dataset</a> |
+  <a href="#construction-pipeline">Construction</a> |
+  <a href="#paper-results">Results</a> |
+  <a href="docs/REPRODUCIBILITY.md">Reproducibility</a> |
+  <a href="DATASET_CARD.md">Dataset Card</a>
+</p>
 
 EAPO-EmoPrefer is the controlled error-augmented preference dataset introduced in **Error-Augmented Preference Optimization (EAPO)**. It extends human-annotated multimodal emotion preference pairs with fluent but intentionally unreliable descriptions covering four controlled error types.
 
 The repository contains the released dataset, Qwen3-based construction and verification code, and the evaluation results reported in the paper. It does not include SFT/DPO training code, model weights, or source audio/video files.
+
+<p align="center">
+  <img src="assets/eapo_framework.png" alt="Overview of the EAPO framework" width="100%">
+</p>
+
+<p align="center"><em>EAPO constructs controlled error-augmented pairs, adapts independent MLLM judges, and combines their normalized preference margins at inference time.</em></p>
 
 ## Dataset Composition
 
@@ -11,9 +29,9 @@ The following counts use the same convention as the paper.
 | Dataset | Role | Preference pairs |
 |---|---|---:|
 | EmoPrefer-Data-V2 | Normal training | 1,618 |
-| EAPO Error-Aug Train-Set | Error-augmented training | 2,908 |
+| Error-Aug Train-Set | Error-augmented training | 2,908 |
 | EmoPrefer-Data | Original validation | 563 |
-| EAPO Error-Aug Val-Set | Controlled-error validation | 944 |
+| Error-Aug Val-Set | Controlled-error validation | 944 |
 | MER-Prefer Test Stage 1 | Official test evaluation | 379 |
 | MER-Prefer Test Stage 2 | Official test evaluation | 515 |
 
@@ -38,11 +56,17 @@ Each controlled negative is produced by the following pipeline:
 4. **Rule-based validation.** The candidate must satisfy type-specific constraints as well as quotation, locality, length, sentence-count, and lexical-overlap checks.
 5. **Independent Qwen3 verification.** A separate Qwen3 inference pass checks the observed error type, non-target preservation, fluency, and construction quality. Only accepted candidates enter the released dataset.
 
-Generation and verification use `Qwen3-30B-A3B-Instruct-2507` with greedy decoding. The verifier does not receive the gold preference label.
+Generation and verification use `Qwen3-Omni-30B-A3B-Instruct` with greedy decoding. The verifier does not receive the gold preference label.
+
+<p align="center">
+  <img src="assets/emotion_flip_case_study.png" alt="Emotion Flip construction case study" width="82%">
+</p>
+
+<p align="center"><em>A released Emotion Flip example showing structured edit planning, exact-phrase replacement, automatic checks, and independent semantic verification.</em></p>
 
 ## Paper Results
 
-The table below reports representative paper results in weighted F1 (WAF, %). **Orig. Val** is the original 563-pair validation set. **4-Error Avg** macro-averages WAF across the four controlled-error subsets. **Swap Cons** measures whether a judge preserves the selected description identity after candidate order is reversed.
+The table below reports representative validation results from the paper in weighted F1 (WAF, %). **Orig. Val** is the original 563-pair validation set. **4-Error Avg** macro-averages WAF across the four controlled-error subsets. **Swap Cons** measures whether a judge preserves the selected description identity after candidate order is reversed.
 
 | Model | Training setting | Orig. Val | 4-Error Avg | Swap Cons |
 |---|---|---:|---:|---:|
@@ -52,7 +76,7 @@ The table below reports representative paper results in weighted F1 (WAF, %). **
 | Qwen2.5-Omni-7B | S2 Error-Aug SFT+DPO | 79.75 | 90.97 | 84.21 |
 | Qwen3-Omni-30B-A3B-Instruct | S2 Zero-shot | 73.18 | 93.82 | 91.55 |
 | **Qwen3-Omni-30B-A3B-Instruct** | **S2 Error-Aug SFT+DPO** | **79.04** | **95.82** | **94.13** |
-| EAPO calibrated fusion | Judges 16+19+21 | **80.82** | 94.35 | 91.41 |
+| **EAPO calibrated fusion** | **Judges 16+19+21** | **80.82** | 94.35 | 91.41 |
 
 For Qwen3, error-augmented SFT followed by DPO obtains the strongest controlled-error performance:
 
@@ -60,7 +84,29 @@ For Qwen3, error-augmented SFT followed by DPO obtains the strongest controlled-
 |---:|---:|---:|---:|---:|
 | 94.22 | 94.57 | 98.04 | 96.44 | **95.82** |
 
-The full paper-aligned model comparisons are organized by backbone in [docs/RESULTS.md](docs/RESULTS.md).
+On the official test sets, the paper combines Judges 11, 16, and 21. Scale normalization improves both stages over raw-margin averaging and yields the strongest Macro WAF.
+
+| Official test system | Judges | Stage 1 | Stage 2 | Macro |
+|---|---|---:|---:|---:|
+| Best single judge: Qwen3 S2 Zero-shot | Judge 17 | 90.07 | 68.44 | 79.26 |
+| Hard Voting | 11+16+21 | 88.85 | 68.88 | 78.86 |
+| Raw Fusion | 11+16+21 | 90.42 | 69.07 | 79.75 |
+| **EAPO normalized fusion** | **11+16+21** | **91.56** | **69.51** | **80.54** |
+
+The complete validation and official test tables are reproduced in [docs/RESULTS.md](docs/RESULTS.md). All numbers in this repository are transcribed from the paper's camera-ready manuscript.
+
+## Repository Structure
+
+```text
+EAPO-EmoPrefer/
+├── assets/                 # Paper framework and construction case study
+├── data/                   # Released controlled negatives and preference pairs
+├── docs/                   # Methodology, prompts, results, and reproduction notes
+├── eapo/                   # Construction, validation, and export implementation
+├── scripts/                # Pipeline and release-validation entry points
+├── DATASET_CARD.md
+└── README.md
+```
 
 ## Data Files
 
@@ -132,3 +178,15 @@ python scripts/validate_release.py
 ## License and Source Media
 
 The code is released under the MIT License. Dataset-specific terms are described in [DATA_LICENSE.md](DATA_LICENSE.md). Source audio and video are not redistributed; sample IDs are retained only as join keys for users with lawful access to the source benchmark.
+
+## Citation
+
+```bibtex
+@inproceedings{huang2026eapo,
+  title     = {Learning to Prefer Reliably: Error-Augmented Emotion Preference Optimization with Calibrated Fusion},
+  author    = {Huang, Zilong and Peng, Junyi and Li, Junjie and Li, Kai and Ren, Wenze and Lee, Kong Aik and Mak, Man-Wai and Kawahara, Tatsuya},
+  booktitle = {Proceedings of the 4th International Workshop on Multimodal, Generative and Responsible Affective Computing},
+  year      = {2026},
+  doi       = {10.1145/3840474.3840521}
+}
+```
