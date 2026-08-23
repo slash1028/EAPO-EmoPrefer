@@ -1,0 +1,32 @@
+{
+  "sample_id": "samplenew3_00025873",
+  "split": "validation",
+  "error_type": "emotion_flip",
+  "preferred_description": "In the text, the subtitle says, \"Look at yourself now.\" This sentence may be a comment or reaction to the individual's current state. Based on the description of the individual's tense and anxious voice characteristics in the audio clues, as well as the serious expression and body language of the woman in the video clues, we can infer that this sentence may carry a tone of criticism or concern. Therefore, this sentence may be pointing out the individual's current negative state or expressing concern about their emotions.",
+  "controlled_negative": "In the text, the subtitle says, \"Look at yourself now.\" This sentence may be a comment or reaction to the individual's current state. Based on the description of the individual's tense and anxious voice characteristics in the audio clues, as well as the serious expression and body language of the woman in the video clues, we can infer that this sentence may carry a tone of empathy or reassurance. Therefore, this sentence may be pointing out the individual's current negative state or expressing concern about their emotions.",
+  "edit_plan": {
+    "sentence_id": "S3",
+    "source_phrase": "we can infer that this sentence may carry a tone of criticism or concern",
+    "replacement_phrase": "we can infer that this sentence may carry a tone of empathy or reassurance",
+    "target_modality": "global",
+    "rationale": "The original inference of criticism or concern is flipped to empathy or reassurance, maintaining the same level of emotional intensity while reversing the valence. The observed cues (tense voice, serious expression, body language) remain unchanged, and the edit only alters the inferred emotional tone of the utterance.",
+    "construction": "qwen3_generated"
+  },
+  "automatic_metrics": {
+    "preferred_words": 87,
+    "negative_words": 87,
+    "length_delta": 0,
+    "sentence_delta": 0,
+    "lexical_jaccard": 0.9482758620689655,
+    "sequence_similarity": 0.9601518026565465
+  },
+  "verification": {
+    "observed_type": "emotion_flip",
+    "targeted_error_present": true,
+    "non_target_preserved": true,
+    "fluent": true,
+    "quality_score": 5,
+    "verified": true,
+    "notes": "The original inference of 'criticism or concern' is flipped to 'empathy or reassurance', which is a direct change in emotion valence while keeping the same observed cues (tense voice, serious expression). This matches the definition of emotion_flip: only the inferred emotion category changes, not the evidence. The sentence is fluent and well-constructed."
+  }
+}

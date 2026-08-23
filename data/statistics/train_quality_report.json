@@ -1,0 +1,57 @@
+{
+  "official_binary_samples": 1618,
+  "samples_with_any_verified_generated_type": 1252,
+  "samples_with_all_four_verified_generated_types": 77,
+  "generated_type_pairs": 2908,
+  "possible_generated_type_pairs": 6472,
+  "generated_type_yield_percent": 44.93201483312732,
+  "no_swap_pair_rows": 4526,
+  "swap_pair_rows": 9052,
+  "type_statistics": {
+    "original_rejected": {
+      "pairs": 1618,
+      "yield_percent": 100.0,
+      "preferred_words_mean": 186.0160692212608,
+      "negative_words_mean": 163.8176761433869,
+      "absolute_length_delta_mean": 78.40852904820767,
+      "lexical_jaccard_mean": 0.1913338555385244,
+      "sequence_similarity_mean": 0.04719633035052476
+    },
+    "emotion_flip": {
+      "pairs": 749,
+      "yield_percent": 46.291718170580964,
+      "preferred_words_mean": 192.83044058744994,
+      "negative_words_mean": 192.7196261682243,
+      "absolute_length_delta_mean": 0.28437917222963954,
+      "lexical_jaccard_mean": 0.9616435434055861,
+      "sequence_similarity_mean": 0.949666468518831
+    },
+    "intensity_mismatch": {
+      "pairs": 405,
+      "yield_percent": 25.030902348578493,
+      "preferred_words_mean": 196.37777777777777,
+      "negative_words_mean": 196.45185185185184,
+      "absolute_length_delta_mean": 0.26666666666666666,
+      "lexical_jaccard_mean": 0.9835274989565419,
+      "sequence_similarity_mean": 0.9767383920230236
+    },
+    "evidence_contradiction": {
+      "pairs": 1103,
+      "yield_percent": 68.17058096415327,
+      "preferred_words_mean": 182.8467815049864,
+      "negative_words_mean": 182.70081595648233,
+      "absolute_length_delta_mean": 0.3599274705349048,
+      "lexical_jaccard_mean": 0.9589721035042521,
+      "sequence_similarity_mean": 0.9103824577179148
+    },
+    "modality_omission": {
+      "pairs": 651,
+      "yield_percent": 40.23485784919654,
+      "preferred_words_mean": 175.99078341013825,
+      "negative_words_mean": 159.92780337941628,
+      "absolute_length_delta_mean": 16.062980030721967,
+      "lexical_jaccard_mean": 0.938315233239304,
+      "sequence_similarity_mean": 0.8457796198137195
+    }
+  }
+}

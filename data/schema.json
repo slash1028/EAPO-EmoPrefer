@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EAPO-EmoPrefer controlled negative",
+  "type": "object",
+  "required": [
+    "sample_id",
+    "split",
+    "error_type",
+    "preferred_description",
+    "controlled_negative",
+    "edit_plan",
+    "automatic_metrics",
+    "verification"
+  ],
+  "properties": {
+    "sample_id": {"type": "string"},
+    "split": {"enum": ["train", "validation"]},
+    "error_type": {
+      "enum": [
+        "emotion_flip",
+        "intensity_mismatch",
+        "evidence_contradiction",
+        "modality_omission"
+      ]
+    },
+    "preferred_description": {"type": "string"},
+    "controlled_negative": {"type": "string"},
+    "edit_plan": {
+      "type": "object",
+      "required": [
+        "sentence_id",
+        "source_phrase",
+        "replacement_phrase",
+        "target_modality",
+        "rationale",
+        "construction"
+      ],
+      "properties": {
+        "construction": {"const": "qwen3_generated"}
+      }
+    },
+    "automatic_metrics": {
+      "type": "object",
+      "required": [
+        "preferred_words",
+        "negative_words",
+        "length_delta",
+        "sentence_delta",
+        "lexical_jaccard",
+        "sequence_similarity"
+      ]
+    },
+    "verification": {
+      "type": "object",
+      "required": [
+        "observed_type",
+        "targeted_error_present",
+        "non_target_preserved",
+        "fluent",
+        "quality_score",
+        "verified",
+        "notes"
+      ]
+    }
+  }
+}

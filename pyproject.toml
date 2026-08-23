@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eapo-emoprefer"
+version = "1.0.0"
+description = "Controlled error-augmented negative construction for multimodal emotion preference data"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+  "torch>=2.1",
+  "transformers>=4.57",
+  "accelerate>=0.30",
+]
+
+[project.scripts]
+eapo-generate = "eapo_emoprefer.generate:main"
+eapo-verify = "eapo_emoprefer.verify:main"
+eapo-export = "eapo_emoprefer.export_release:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

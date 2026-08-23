@@ -1,0 +1,21 @@
+{
+  "split": "validation",
+  "source_samples": 563,
+  "samples_with_controlled_negatives": 443,
+  "samples_with_all_four_types": 17,
+  "controlled_negatives": 944,
+  "five_type_preference_pairs": 1507,
+  "position_balanced_pair_rows": 3014,
+  "counts_by_error_type": {
+    "emotion_flip": 317,
+    "evidence_contradiction": 342,
+    "intensity_mismatch": 99,
+    "modality_omission": 186
+  },
+  "generator": "Qwen3-30B-A3B-Instruct-2507",
+  "verifier": "Qwen3-30B-A3B-Instruct-2507",
+  "construction": "qwen3_generated_and_qwen3_verified",
+  "contains_media": false,
+  "contains_raw_model_responses": false,
+  "canonical_annotations_contain_candidate_order_augmentation": false
+}
