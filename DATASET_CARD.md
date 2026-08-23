@@ -34,7 +34,7 @@ The quality score is an ordinal verifier judgment, not a calibrated probability 
 
 ## Dataset Statistics
 
-The release contains 3,852 newly generated controlled negatives: 2,908 train and 944 validation. After adding one original rejected pair per source sample, the canonical five-type preference data contain 4,526 train and 1,507 validation pairs. Position balancing produces 9,052 train and 3,014 validation rows. Error-type counts are reported in `data/*/statistics.json`; aggregate counts and quality summaries are under `data/statistics/`.
+Following the paper's reporting convention, EmoPrefer-Data-V2 contains 1,618 original training pairs, the EAPO error-augmented training set contains 4,526 pairs, EmoPrefer-Data contains 563 original validation pairs, and the controlled-error validation set contains 944 generated pairs. Detailed machine-readable counts are available in `data/*/statistics.json`.
 
 ## Intended Uses
 

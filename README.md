@@ -1,65 +1,85 @@
 # EAPO-EmoPrefer
 
-EAPO-EmoPrefer is a controlled error-augmented preference dataset for multimodal emotion-description evaluation. Starting from a human-preferred description, the pipeline constructs a minimal local error, applies deterministic structural checks, and uses a separate Qwen3 inference pass to verify the error type and construction quality.
+EAPO-EmoPrefer is the controlled error-augmented preference dataset introduced in **Error-Augmented Preference Optimization (EAPO)**. It extends human-annotated multimodal emotion preference pairs with fluent but intentionally unreliable descriptions covering four controlled error types.
 
-This repository release contains the controlled data-construction pipeline and verified annotations only. It does **not** contain model-training code, model weights, raw audio, or raw video.
+The repository contains the released dataset, Qwen3-based construction and verification code, and the evaluation results reported in the paper. It does not include SFT/DPO training code, model weights, or source audio/video files.
 
-## Dataset Summary
+## Dataset Composition
 
-| Split | Source samples | Samples with generated negatives | Controlled negatives | All four types |
-|---|---:|---:|---:|---:|
-| Train | 1,618 | 1,252 | 2,908 | 77 |
-| Validation | 563 | 443 | 944 | 17 |
-| **Total** | **2,181** | **1,695** | **3,852** | **94** |
+The following counts use the same convention as the paper.
 
-| Error type | Train | Validation | Total |
-|---|---:|---:|---:|
-| Emotion Flip | 749 | 317 | 1,066 |
-| Intensity Mismatch | 405 | 99 | 504 |
-| Evidence Contradiction | 1,103 | 342 | 1,445 |
-| Modality Omission | 651 | 186 | 837 |
+| Dataset | Role | Preference pairs |
+|---|---|---:|
+| EmoPrefer-Data-V2 | Normal training | 1,618 |
+| EAPO Error-Aug Train-Set | Error-augmented training | 4,526 |
+| EmoPrefer-Data | Original validation | 563 |
+| EAPO Error-Aug Val-Set | Controlled-error validation | 944 |
+| MER-Prefer Test Stage 1 | Official test evaluation | 379 |
+| MER-Prefer Test Stage 2 | Official test evaluation | 515 |
 
-Each canonical controlled-negative record stores one semantic preferred-negative relation. Candidate-order duplication is excluded from the canonical JSONL/CSV annotations; an optional position-balanced pair file is provided separately for exact experimental accounting.
-
-To match the data accounting used in the paper, the repository exposes three explicit views:
-
-| Data view | Train | Validation | Meaning |
-|---|---:|---:|---|
-| Controlled generated negatives | 2,908 | 944 | Four Qwen3-generated and independently Qwen3-verified error types |
-| Five-type preference pairs | 4,526 | 1,507 | Controlled negatives plus one original rejected pair per source sample |
-| Position-balanced pair rows | 9,052 | 3,014 | Both candidate orders for every five-type pair |
-
-Use the first row when reporting the number of newly generated negatives, the second for the canonical five-type preference dataset, and the third for the position-balanced training representation.
+The error-augmented training set combines the original training preference pairs with accepted controlled negatives. The validation set contains the accepted controlled-error pairs used to report the four-error diagnostic results.
 
 ## Controlled Error Types
 
-- **Emotion Flip:** changes only the inferred emotion category or valence while preserving observed evidence.
-- **Intensity Mismatch:** changes the degree of the same cue or emotion without changing its category.
-- **Evidence Contradiction:** reverses one or more closely related observations in exactly one modality.
-- **Modality Omission:** removes one self-contained evidence clause from exactly one modality without adding facts.
+| Error type | Controlled modification |
+|---|---|
+| **Emotion Flip** | Changes the inferred emotion category or valence while preserving the cited multimodal evidence. |
+| **Intensity Mismatch** | Changes only the degree of an emotion or cue while preserving its category. |
+| **Evidence Contradiction** | Reverses one or more related observations from one modality while preserving the broader interpretation. |
+| **Modality Omission** | Removes one self-contained evidence clause from one modality without adding new facts. |
 
-## Repository Layout
+## Construction Pipeline
+
+Each controlled negative is produced by the following pipeline:
+
+1. **Preferred anchor selection.** The human-preferred description is selected from the original preference pair and segmented into numbered sentences.
+2. **Qwen3 edit planning.** Qwen3-30B-A3B-Instruct proposes a structured local edit for one requested error type, including the exact source phrase and replacement phrase.
+3. **Programmatic construction.** Code applies only the proposed local replacement while freezing all non-target text.
+4. **Rule-based validation.** The candidate must satisfy type-specific constraints as well as quotation, locality, length, sentence-count, and lexical-overlap checks.
+5. **Independent Qwen3 verification.** A separate Qwen3 inference pass checks the observed error type, non-target preservation, fluency, and construction quality. Only accepted candidates enter the released dataset.
+
+Generation and verification use `Qwen3-30B-A3B-Instruct-2507` with greedy decoding. The verifier does not receive the gold preference label.
+
+## Paper Results
+
+The table below reports representative paper results in weighted F1 (WAF, %). **Orig. Val** is the original 563-pair validation set. **4-Error Avg** macro-averages WAF across the four controlled-error subsets. **Swap Cons** measures whether a judge preserves the selected description identity after candidate order is reversed.
+
+| Model | Training setting | Orig. Val | 4-Error Avg | Swap Cons |
+|---|---|---:|---:|---:|
+| MiniCPM-o-2.6-8B | S1 Zero-shot | 59.48 | 88.46 | 81.94 |
+| MiniCPM-o-2.6-8B | S1 Error-Aug SFT+DPO | 63.27 | 92.40 | 87.46 |
+| Qwen2.5-Omni-7B | S2 Zero-shot | 65.53 | 78.97 | 70.42 |
+| Qwen2.5-Omni-7B | S2 Error-Aug SFT+DPO | 79.75 | 90.97 | 84.21 |
+| Qwen3-Omni-30B-A3B-Instruct | S2 Zero-shot | 73.18 | 93.82 | 91.55 |
+| **Qwen3-Omni-30B-A3B-Instruct** | **S2 Error-Aug SFT+DPO** | **79.04** | **95.82** | **94.13** |
+| EAPO calibrated fusion | Judges 16+19+21 | **80.82** | 94.35 | 91.41 |
+
+For Qwen3, error-augmented SFT followed by DPO obtains the strongest controlled-error performance:
+
+| Emotion Flip | Intensity Mismatch | Evidence Contradiction | Modality Omission | 4-Error Avg |
+|---:|---:|---:|---:|---:|
+| 94.22 | 94.57 | 98.04 | 96.44 | **95.82** |
+
+The full paper-aligned model comparisons are organized by backbone in [docs/RESULTS.md](docs/RESULTS.md).
+
+## Data Files
 
 ```text
-EAPO-EmoPrefer/
-├── data/
-│   ├── train/
-│   │   ├── controlled_negatives.jsonl
-│   │   ├── controlled_negatives.csv
-│   │   ├── preference_pairs.csv
-│   │   ├── preference_pairs_position_balanced.csv
-│   │   └── statistics.json
-│   ├── validation/
-│   ├── examples/
-│   ├── statistics/          # Aggregate counts and quality summaries
-│   └── schema.json
-├── docs/
-│   ├── METHODOLOGY.md
-│   ├── PROMPTS.md
-│   └── REPRODUCIBILITY.md
-├── scripts/run_pipeline.sh
-└── src/eapo_emoprefer/
+data/
+├── train/
+│   ├── controlled_negatives.jsonl
+│   ├── controlled_negatives.csv
+│   ├── preference_pairs.csv
+│   └── preference_pairs_position_balanced.csv
+├── validation/
+├── examples/
+└── schema.json
 ```
+
+- `controlled_negatives.jsonl` is the canonical release with nested edit and verification metadata.
+- `controlled_negatives.csv` provides a flattened version of the same records.
+- `preference_pairs.csv` contains the pairwise preference format used by the paper pipeline.
+- `preference_pairs_position_balanced.csv` contains both candidate orders for position-bias control.
 
 ## Loading the Dataset
 
@@ -77,12 +97,7 @@ print(records[0]["preferred_description"])
 print(records[0]["controlled_negative"])
 ```
 
-The JSONL representation preserves nested edit-plan and verification metadata. The CSV representation provides the same core fields in a flattened form.
-
-- `preference_pairs.csv` contains each original or controlled preferred-negative relation once.
-- `preference_pairs_position_balanced.csv` contains both A1/A2 candidate orders and is the exact count used for position-balanced training rows.
-
-## Reproducing Data Construction
+## Reproducing Construction
 
 Install the package:
 
@@ -90,13 +105,7 @@ Install the package:
 python -m pip install -e .
 ```
 
-Prepare a source CSV with these columns:
-
-```text
-name,a1,a2,preference
-```
-
-`preference` must be either `a1` or `a2`. The selected candidate becomes the preferred anchor. Then run:
+Prepare a source CSV with `name`, `a1`, `a2`, and `preference` columns, then run:
 
 ```bash
 INPUT_CSV=/path/to/source.csv \
@@ -105,33 +114,21 @@ MODEL=Qwen/Qwen3-30B-A3B-Instruct-2507 \
 bash scripts/run_pipeline.sh
 ```
 
-The pipeline runs three processes sequentially:
-
-1. Qwen3 proposes one structured local edit for each requested error type.
-2. Deterministic code assembles the candidate and applies format, locality, quotation, length, and overlap checks.
-3. A separately loaded Qwen3 verifier audits the preferred-negative pair and retains only candidates that pass all quality conditions.
-
-Generation and verification use greedy decoding (`do_sample=False`). No audio or video is loaded by this text-only release pipeline.
-
-Validate a downloaded or regenerated release with:
+Validate the released files with:
 
 ```bash
 python scripts/validate_release.py
 ```
 
-## Source Media
-
-Media files are deliberately excluded. `sample_id` is retained only as a join key for users who have independently obtained lawful access to the source benchmark. This repository does not grant rights to any source audio, video, or third-party benchmark content.
-
 ## Documentation
 
-- [Methodology](docs/METHODOLOGY.md)
+- [Construction methodology](docs/METHODOLOGY.md)
 - [Prompt templates](docs/PROMPTS.md)
+- [Paper-aligned experimental results](docs/RESULTS.md)
 - [Reproducibility guide](docs/REPRODUCIBILITY.md)
-- [Paper data accounting](docs/PAPER_DATA_ACCOUNTING.md)
 - [Dataset card](DATASET_CARD.md)
 - [Field schema](data/schema.json)
 
-## License
+## License and Source Media
 
-The code is released under the MIT License. Dataset-specific terms and source-media restrictions are described in [DATA_LICENSE.md](DATA_LICENSE.md). Maintainers should confirm compatibility with the source benchmark terms before making the repository public.
+The code is released under the MIT License. Dataset-specific terms are described in [DATA_LICENSE.md](DATA_LICENSE.md). Source audio and video are not redistributed; sample IDs are retained only as join keys for users with lawful access to the source benchmark.
