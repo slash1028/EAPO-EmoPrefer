@@ -30,7 +30,7 @@ See `data/examples/samplenew3_00025873_emotion_flip.json` for a complete record.
 ## Curation Process
 
 1. Select the human-preferred description from each binary preference pair.
-2. Number its sentences and request one local edit plan per error type from Qwen3-30B-A3B-Instruct-2507 using greedy decoding (`do_sample=False`).
+2. Number its sentences and request one local edit plan per error type from [Qwen3-30B-A3B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-30B-A3B-Instruct-2507).
 3. Apply exact phrase replacement in code while freezing all non-target text.
 4. Reject candidates that violate type-specific structure, quotation preservation, length, sentence-count, or lexical-overlap constraints.
 5. Audit the remaining preferred-negative pairs with a separate text-only Qwen3 inference call.

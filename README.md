@@ -1,9 +1,18 @@
 <h1 align="center">EAPO-EmoPrefer</h1>
 
 <p align="center">
-  <strong>Official data and construction-code release for</strong><br>
+  <strong>[ACM-MM 2026 Workshop]</strong><br>
   <strong><em>Learning to Prefer Reliably: Error-Augmented Emotion Preference Optimization with Calibrated Fusion</em></strong>
 </p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Code%20License-MIT-blue.svg" alt="Code License: MIT"></a>
+  <a href="DATA_LICENSE.md"><img src="https://img.shields.io/badge/Data%20License-CC%20BY--NC%204.0-blue.svg" alt="Data License: CC BY-NC 4.0"></a>
+  <a href="#citation"><img src="https://img.shields.io/badge/arXiv-coming%20soon-B31B1B.svg" alt="arXiv: coming soon"></a>
+  <a href="https://github.com/slash1028/EAPO-EmoPrefer/stargazers"><img src="https://img.shields.io/github/stars/slash1028/EAPO-EmoPrefer?style=social" alt="GitHub Stars"></a>
+</p>
+
+<!-- Replace the arXiv badge text and target after the preprint is available. -->
 
 <p align="center">
   <a href="#dataset-composition">Dataset</a> |
@@ -14,6 +23,8 @@
 </p>
 
 EAPO-EmoPrefer is the controlled error-augmented preference dataset introduced in **Error-Augmented Preference Optimization (EAPO)**. It is an extension of [EmoPrefer](https://github.com/zeroQiaoba/AffectGPT/tree/master/EmoPrefer): starting from its human-annotated multimodal preference pairs, we construct fluent but intentionally unreliable descriptions covering four controlled error types.
+
+This repository provides the controlled dataset, construction pipeline, documentation, and paper-aligned results for our work at the MRAC '26 workshop co-located with ACM Multimedia 2026.
 
 The repository contains the released dataset, Qwen3-based construction and verification code, and the evaluation results reported in the paper. It does not include SFT/DPO training code, model weights, or source audio/video files.
 
@@ -64,14 +75,12 @@ The Error-Aug Train-Set and Error-Aug Val-Set contain only the newly generated c
 Each controlled negative is produced by the following pipeline:
 
 1. **Preferred anchor selection.** The human-preferred description is selected from the original preference pair and segmented into numbered sentences.
-2. **Qwen3 edit planning.** Qwen3-30B-A3B-Instruct proposes a structured local edit for one requested error type, including the exact source phrase and replacement phrase.
+2. **Qwen3 edit planning.** [Qwen3-30B-A3B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-30B-A3B-Instruct-2507) proposes a structured local edit for one requested error type, including the exact source phrase and replacement phrase.
 3. **Programmatic construction.** Code applies only the proposed local replacement while freezing all non-target text.
 4. **Rule-based validation.** The candidate must satisfy type-specific constraints as well as quotation, locality, length, sentence-count, and lexical-overlap checks.
 5. **Independent Qwen3 verification.** A separate Qwen3 inference pass checks the observed error type, non-target preservation, fluency, and construction quality. Only accepted candidates enter the released dataset.
 
-Both text-only Qwen3 stages use `Qwen3-30B-A3B-Instruct-2507`. They set `do_sample=False`, so the model uses single-beam greedy decoding: at each step it selects the highest-scoring next token instead of randomly sampling from the token distribution. This improves repeatability, although exact outputs can still vary across model revisions, hardware, and software versions.
-
-The verifier is shown the selected preferred anchor, the requested error type, the local edit, and the resulting negative. It is **not** shown the raw human label (`preference=a1` or `preference=a2`), candidate position, or source media. It therefore audits whether the proposed edit realizes the requested error and preserves non-target text; it is not an independent re-annotation of which original candidate humans preferred.
+Both text-only stages use the same Qwen3 checkpoint in separate inference calls. The verifier audits the requested error and non-target preservation without receiving source media or the raw `a1`/`a2` preference field. Exact prompts and decoding settings are provided in [docs/PROMPTS.md](docs/PROMPTS.md) and the released code.
 
 <p align="center">
   <img src="assets/emotion_flip_case_study.png" alt="Emotion Flip construction case study" width="82%">
@@ -85,12 +94,12 @@ The table below reports representative validation results from the paper in weig
 
 | Model | Training setting | Orig. Val | 4-Error Avg | Swap Cons |
 |---|---|---:|---:|---:|
-| MiniCPM-o-2.6-8B | S1 Zero-shot | 61.53 | 69.46 | 53.50 |
-| MiniCPM-o-2.6-8B | S1 Error-Aug SFT+DPO | 73.89 | **86.09** | 76.27 |
-| Qwen2.5-Omni-7B | S2 Zero-shot | 68.17 | 58.01 | 34.96 |
-| Qwen2.5-Omni-7B | S2 Error-Aug SFT+DPO | 78.29 | 76.89 | 65.36 |
-| Qwen3-Omni-30B-A3B-Instruct | S2 Zero-shot | 73.43 | 70.15 | 54.13 |
-| Qwen3-Omni-30B-A3B-Instruct | S2 Error-Aug SFT+DPO | 79.04 | 83.91 | 75.74 |
+| [MiniCPM-o-2.6-8B](https://huggingface.co/openbmb/MiniCPM-o-2_6) | S1 Zero-shot | 61.53 | 69.46 | 53.50 |
+| [MiniCPM-o-2.6-8B](https://huggingface.co/openbmb/MiniCPM-o-2_6) | S1 Error-Aug SFT+DPO | 73.89 | **86.09** | 76.27 |
+| [Qwen2.5-Omni-7B](https://huggingface.co/Qwen/Qwen2.5-Omni-7B) | S2 Zero-shot | 68.17 | 58.01 | 34.96 |
+| [Qwen2.5-Omni-7B](https://huggingface.co/Qwen/Qwen2.5-Omni-7B) | S2 Error-Aug SFT+DPO | 78.29 | 76.89 | 65.36 |
+| [Qwen3-Omni-30B-A3B-Instruct](https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct) | S2 Zero-shot | 73.43 | 70.15 | 54.13 |
+| [Qwen3-Omni-30B-A3B-Instruct](https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct) | S2 Error-Aug SFT+DPO | 79.04 | 83.91 | 75.74 |
 | **EAPO calibrated fusion** | **Judges 11+14+21** | **80.31** | 85.35 | **76.38** |
 
 For Qwen3, error-augmented SFT followed by DPO obtains the strongest controlled-error performance:

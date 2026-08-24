@@ -106,10 +106,6 @@ and quality_score >= 3
 
 Rejected types are discarded independently. A source sample can therefore contribute any subset of the four generated types.
 
-## Decoding Configuration
-
-Both the edit-planning and semantic-verification calls set `do_sample=False`. With the default single beam, decoding greedily chooses the highest-scoring next token at every step; no temperature, top-k, or top-p sampling is applied. This reduces random variation between runs but does not guarantee bit-identical output across different model revisions, hardware, attention kernels, or library versions.
-
 ## Stage 5: Public Export
 
 The public export stores each verified relation once. It removes raw model responses, retry histories, local file paths, and candidate-order duplication while preserving the final edit plan, automatic metrics, and verifier assessment.
