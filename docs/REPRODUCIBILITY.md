@@ -1,5 +1,14 @@
 # Reproducibility Guide
 
+## Upstream Data Access
+
+1. Obtain the original preference annotations from the [EmoPrefer repository](https://github.com/zeroQiaoba/AffectGPT/tree/master/EmoPrefer).
+2. Request access to [MER2025 on Hugging Face](https://huggingface.co/datasets/MERChallenge/MER2025), accept its EULA, provide the requested contact information, and wait for approval.
+3. Download the authorized media according to `README_AFTER_APPROVAL.md` in the gated repository.
+4. Keep the upstream media outside this repository. Join EAPO records to clips using `sample_id` only when multimodal training or evaluation is required.
+
+The controlled-negative generation and verification stages are text-only and therefore do not require media paths. The complete multimodal preference-judge experiments do require authorized source media. See `DATA_ACCESS.md` for the relationship among the files.
+
 ## Environment
 
 - Python 3.10 or newer
@@ -81,7 +90,7 @@ eapo-export \
 
 ## Determinism
 
-Both Qwen3 stages use greedy decoding with `do_sample=False`. Exact output reproducibility can still depend on hardware, attention implementation, PyTorch/Transformers versions, and model revision. The deterministic code checks and accepted public records are provided to support auditability even when a regenerated plan differs.
+Both text-only Qwen3 stages use greedy decoding with `do_sample=False`. With the default `num_beams=1`, each generation step selects the highest-scoring next token rather than randomly sampling. Temperature, top-k, and top-p do not control token selection in this mode. Exact output reproducibility can still depend on hardware, attention implementation, PyTorch/Transformers versions, and model revision. The deterministic code checks and accepted public records are provided to support auditability even when a regenerated plan differs.
 
 ## Output Policy
 

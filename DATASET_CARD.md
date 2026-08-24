@@ -2,9 +2,15 @@
 
 ## Dataset Description
 
-EAPO-EmoPrefer contains verified, controlled negative emotion descriptions constructed from human-preferred multimodal emotion descriptions. Each negative differs from its preferred anchor through a constrained local edit designed to instantiate one predefined error type.
+EAPO-EmoPrefer accompanies the paper *Learning to Prefer Reliably: Error-Augmented Emotion Preference Optimization with Calibrated Fusion*. It contains model-verified, controlled negative emotion descriptions constructed from human-preferred descriptions in [EmoPrefer](https://github.com/zeroQiaoba/AffectGPT/tree/master/EmoPrefer). Each negative differs from its preferred anchor through a constrained local edit designed to instantiate one predefined error type.
 
 The release is intended for preference-judge training, controlled error analysis, robustness evaluation, and research on multimodal emotion-description reliability.
+
+## Source Data and Dependency
+
+The original candidate descriptions and human preference labels come from EmoPrefer and EmoPrefer-Data-V2. Their referenced source audio/video clips come from the gated [MER2025 dataset](https://huggingface.co/datasets/MERChallenge/MER2025). This release contains no raw media and does not replace either upstream resource. Authorized users can associate records with MER2025 clips through `sample_id`; multimodal training or evaluation requires separately approved access to those clips.
+
+The MER2025 dataset card requires academic-use approval and acceptance of its EULA, and restricts redistribution and derivative use. Users must review and comply with the current upstream terms. See `docs/DATA_ACCESS.md` and `DATA_LICENSE.md`.
 
 ## Data Instances
 
@@ -24,7 +30,7 @@ See `data/examples/samplenew3_00025873_emotion_flip.json` for a complete record.
 ## Curation Process
 
 1. Select the human-preferred description from each binary preference pair.
-2. Number its sentences and request one local edit plan per error type from Qwen3-30B-A3B-Instruct-2507.
+2. Number its sentences and request one local edit plan per error type from Qwen3-30B-A3B-Instruct-2507 using greedy decoding (`do_sample=False`).
 3. Apply exact phrase replacement in code while freezing all non-target text.
 4. Reject candidates that violate type-specific structure, quotation preservation, length, sentence-count, or lexical-overlap constraints.
 5. Audit the remaining preferred-negative pairs with a separate text-only Qwen3 inference call.
@@ -54,10 +60,13 @@ Following the paper's reporting convention, EmoPrefer-Data-V2 contains 1,618 ori
 
 - Generation and verification are text-only and operate on descriptions rather than directly re-inspecting source media.
 - The generator and verifier use the same Qwen3 checkpoint in separate inference calls, so their errors may be correlated.
+- Quality control is automated and the current release has not received exhaustive human verification; some accepted candidates may contain an incorrect error type or unintended semantic change.
 - Type yields are uneven because candidates are retained independently and ambiguous edits are discarded.
 - Local editing can leave residual discourse-level tension even when the selected span is valid.
 - Automated verification does not replace human review for high-stakes use.
 - Source descriptions and sample identifiers may remain governed by the original benchmark terms.
+
+Future releases will prioritize targeted human review of ambiguous and high-impact cases and publish corrections where needed.
 
 ## Media and Privacy
 

@@ -1,7 +1,8 @@
 <h1 align="center">EAPO-EmoPrefer</h1>
 
 <p align="center">
-  <strong>Controlled Error-Augmented Preference Data for Reliable Multimodal Emotion Judging</strong>
+  <strong>Official data and construction-code release for</strong><br>
+  <strong><em>Learning to Prefer Reliably: Error-Augmented Emotion Preference Optimization with Calibrated Fusion</em></strong>
 </p>
 
 <p align="center">
@@ -12,7 +13,7 @@
   <a href="DATASET_CARD.md">Dataset Card</a>
 </p>
 
-EAPO-EmoPrefer is the controlled error-augmented preference dataset introduced in **Error-Augmented Preference Optimization (EAPO)**. It extends human-annotated multimodal emotion preference pairs with fluent but intentionally unreliable descriptions covering four controlled error types.
+EAPO-EmoPrefer is the controlled error-augmented preference dataset introduced in **Error-Augmented Preference Optimization (EAPO)**. It is an extension of [EmoPrefer](https://github.com/zeroQiaoba/AffectGPT/tree/master/EmoPrefer): starting from its human-annotated multimodal preference pairs, we construct fluent but intentionally unreliable descriptions covering four controlled error types.
 
 The repository contains the released dataset, Qwen3-based construction and verification code, and the evaluation results reported in the paper. It does not include SFT/DPO training code, model weights, or source audio/video files.
 
@@ -21,6 +22,18 @@ The repository contains the released dataset, Qwen3-based construction and verif
 </p>
 
 <p align="center"><em>EAPO constructs controlled error-augmented pairs, adapts independent MLLM judges, and combines their normalized preference margins at inference time.</em></p>
+
+## Dataset Lineage and Required Access
+
+EAPO-EmoPrefer is not a standalone source-media dataset. Three resources play different roles:
+
+| Resource | Role in this project | Access |
+|---|---|---|
+| [EmoPrefer / EmoPrefer-Data-V2](https://github.com/zeroQiaoba/AffectGPT/tree/master/EmoPrefer) | Supplies the original candidate descriptions and human preference annotations from which preferred anchors are selected. | Follow the upstream repository and license. |
+| [MER2025](https://huggingface.co/datasets/MERChallenge/MER2025) | Supplies the audio and video clips referenced by the inherited sample IDs. | Gated academic access; users must accept the EULA, share the requested contact information, and obtain approval. |
+| EAPO-EmoPrefer | Adds four types of generated controlled negatives and their construction/verification metadata. | This repository; source-resource restrictions still apply. |
+
+This repository does **not** redistribute MER2025 audio or video. To use EAPO-EmoPrefer with multimodal judges, users must independently obtain authorized MER2025 access and join the media to our records through `sample_id`. To reproduce the full original-plus-augmented training setup, users must also obtain the EmoPrefer annotations. Access to this repository does not grant permission to redistribute, modify, or publish upstream media or derivative materials; users remain responsible for the current MER2025 EULA and EmoPrefer terms. See [docs/DATA_ACCESS.md](docs/DATA_ACCESS.md) for step-by-step instructions.
 
 ## Dataset Composition
 
@@ -56,7 +69,9 @@ Each controlled negative is produced by the following pipeline:
 4. **Rule-based validation.** The candidate must satisfy type-specific constraints as well as quotation, locality, length, sentence-count, and lexical-overlap checks.
 5. **Independent Qwen3 verification.** A separate Qwen3 inference pass checks the observed error type, non-target preservation, fluency, and construction quality. Only accepted candidates enter the released dataset.
 
-Generation and verification use `Qwen3-Omni-30B-A3B-Instruct` with greedy decoding. The verifier does not receive the gold preference label.
+Both text-only Qwen3 stages use `Qwen3-30B-A3B-Instruct-2507`. They set `do_sample=False`, so the model uses single-beam greedy decoding: at each step it selects the highest-scoring next token instead of randomly sampling from the token distribution. This improves repeatability, although exact outputs can still vary across model revisions, hardware, and software versions.
+
+The verifier is shown the selected preferred anchor, the requested error type, the local edit, and the resulting negative. It is **not** shown the raw human label (`preference=a1` or `preference=a2`), candidate position, or source media. It therefore audits whether the proposed edit realizes the requested error and preserves non-target text; it is not an independent re-annotation of which original candidate humans preferred.
 
 <p align="center">
   <img src="assets/emotion_flip_case_study.png" alt="Emotion Flip construction case study" width="82%">
@@ -102,7 +117,7 @@ EAPO-EmoPrefer/
 ├── assets/                 # Paper framework and construction case study
 ├── data/                   # Released controlled negatives and preference pairs
 ├── docs/                   # Methodology, prompts, results, and reproduction notes
-├── eapo/                   # Construction, validation, and export implementation
+├── src/eapo_emoprefer/     # Construction, validation, and export implementation
 ├── scripts/                # Pipeline and release-validation entry points
 ├── DATASET_CARD.md
 └── README.md
@@ -168,6 +183,7 @@ python scripts/validate_release.py
 
 ## Documentation
 
+- [Data lineage and access](docs/DATA_ACCESS.md)
 - [Construction methodology](docs/METHODOLOGY.md)
 - [Prompt templates](docs/PROMPTS.md)
 - [Paper-aligned experimental results](docs/RESULTS.md)
@@ -175,11 +191,17 @@ python scripts/validate_release.py
 - [Dataset card](DATASET_CARD.md)
 - [Field schema](data/schema.json)
 
+## Limitations and Quality Status
+
+The released candidates pass deterministic type-specific checks and an independent text-only Qwen3 verification call. Because the dataset was constructed under a limited project schedule, quality control is currently automated rather than based on exhaustive human review. The verifier can still accept an incorrect error type, overlook an unintended semantic change, or share systematic biases with the edit planner because both stages use the same checkpoint. The present release should therefore be treated as a research dataset with model-audited annotations, not as error-free human-verified ground truth. We plan to add targeted human review and corrected release versions in future updates.
+
 ## License and Source Media
 
 The code is released under the MIT License. Dataset-specific terms are described in [DATA_LICENSE.md](DATA_LICENSE.md). Source audio and video are not redistributed; sample IDs are retained only as join keys for users with lawful access to the source benchmark.
 
 ## Citation
+
+Research using these controlled annotations should cite the EAPO paper. Because the source preference pairs are inherited from EmoPrefer, please also cite the EmoPrefer paper and follow the citation guidance of MER2025 when its media are used.
 
 ```bibtex
 @inproceedings{huang2026eapo,
@@ -188,5 +210,14 @@ The code is released under the MIT License. Dataset-specific terms are described
   booktitle = {Proceedings of the 4th International Workshop on Multimodal, Generative and Responsible Affective Computing},
   year      = {2026},
   doi       = {10.1145/3840474.3840521}
+}
+```
+
+```bibtex
+@inproceedings{lian2026emoprefer,
+  title     = {EmoPrefer: Can Large Language Models Understand Human Emotion Preferences?},
+  author    = {Lian, Zheng and Sun, Licai and Chen, Lan and Chen, Haoyu and Cheng, Zebang and Zhang, Fan and Jia, Ziyu and Ma, Ziyang and Ma, Fei and Peng, Xiaojiang and others},
+  booktitle = {Proceedings of the International Conference on Learning Representations},
+  year      = {2026}
 }
 ```

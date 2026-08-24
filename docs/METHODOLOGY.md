@@ -22,7 +22,7 @@ For an input row containing `a1`, `a2`, and `preference`, the preferred candidat
 
 ## Stage 2: Structured Edit Planning
 
-Qwen3-30B-A3B-Instruct-2507 receives the numbered preferred description and exactly one requested error type. It returns a JSON object containing:
+The text-only `Qwen3-30B-A3B-Instruct-2507` checkpoint receives the numbered preferred description and exactly one requested error type. It returns a JSON object containing:
 
 - sentence identifier;
 - exact source phrase;
@@ -85,6 +85,8 @@ The published generation configuration uses a maximum full-text length delta of 
 
 Rule-valid candidates are sent to a separate Qwen3 process. The verifier receives the preferred description, requested type, source sentence, source phrase, replacement phrase, and full negative. It does not receive media or preference labels.
 
+More precisely, the human label is used before generation to select the preferred anchor from `a1` and `a2`. The verifier subsequently sees that selected anchor but not the raw `preference=a1/a2` field or original candidate position. Its task is construction-quality auditing, not blind recovery of the original human preference.
+
 The requested type is explicitly presented as an untrusted claim. The verifier independently predicts an observed type and evaluates:
 
 - whether the targeted error is clear;
@@ -103,6 +105,10 @@ and quality_score >= 3
 ```
 
 Rejected types are discarded independently. A source sample can therefore contribute any subset of the four generated types.
+
+## Decoding Configuration
+
+Both the edit-planning and semantic-verification calls set `do_sample=False`. With the default single beam, decoding greedily chooses the highest-scoring next token at every step; no temperature, top-k, or top-p sampling is applied. This reduces random variation between runs but does not guarantee bit-identical output across different model revisions, hardware, attention kernels, or library versions.
 
 ## Stage 5: Public Export
 
