@@ -2,7 +2,7 @@
 
 ## What EAPO-EmoPrefer Extends
 
-EAPO-EmoPrefer is the controlled-error extension released with *Learning to Prefer Reliably: Error-Augmented Emotion Preference Optimization with Calibrated Fusion*. It starts from the human-annotated pairwise emotion descriptions in [EmoPrefer](https://github.com/zeroQiaoba/AffectGPT/tree/master/EmoPrefer). The original human preference identifies which description is used as the preferred anchor; EAPO then constructs up to four localized controlled negatives for that anchor.
+EAPO-EmoPrefer is the controlled-error extension released with [*Learning to Prefer Reliably: Error-Augmented Emotion Preference Optimization with Calibrated Fusion*](https://arxiv.org/abs/2608.24730). It starts from the human-annotated pairwise emotion descriptions in [EmoPrefer](https://github.com/zeroQiaoba/AffectGPT/tree/master/EmoPrefer). The original human preference identifies which description is used as the preferred anchor; EAPO then constructs up to four localized controlled negatives for that anchor.
 
 The corresponding source clips are part of [MER2025](https://huggingface.co/datasets/MERChallenge/MER2025). They are not included in this repository.
 

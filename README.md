@@ -2,19 +2,18 @@
 
 <p align="center">
   <strong>[ACM-MM 2026 Workshop]</strong><br>
-  <strong><em>Learning to Prefer Reliably: Error-Augmented Emotion Preference Optimization with Calibrated Fusion</em></strong>
+  <a href="https://arxiv.org/abs/2608.24730"><strong><em>Learning to Prefer Reliably: Error-Augmented Emotion Preference Optimization with Calibrated Fusion</em></strong></a>
 </p>
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/Code%20License-MIT-blue.svg" alt="Code License: MIT"></a>
   <a href="DATA_LICENSE.md"><img src="https://img.shields.io/badge/Data%20License-CC%20BY--NC%204.0-blue.svg" alt="Data License: CC BY-NC 4.0"></a>
-  <a href="#citation"><img src="https://img.shields.io/badge/arXiv-coming%20soon-B31B1B.svg" alt="arXiv: 2608.24730"></a>
+  <a href="https://arxiv.org/abs/2608.24730"><img src="https://img.shields.io/badge/arXiv-2608.24730-B31B1B.svg" alt="arXiv: 2608.24730"></a>
   <a href="https://github.com/slash1028/EAPO-EmoPrefer/stargazers"><img src="https://img.shields.io/github/stars/slash1028/EAPO-EmoPrefer?style=social" alt="GitHub Stars"></a>
 </p>
 
-<!-- Replace the arXiv badge text and target after the preprint is available. -->
-
 <p align="center">
+  <a href="https://arxiv.org/abs/2608.24730">Paper</a> |
   <a href="#dataset-composition">Dataset</a> |
   <a href="#construction-pipeline">Construction</a> |
   <a href="#paper-results">Results</a> |
@@ -218,7 +217,11 @@ Research using these controlled annotations should cite the EAPO paper. Because 
   author    = {Huang, Zilong and Peng, Junyi and Li, Junjie and Li, Kai and Ren, Wenze and Lee, Kong Aik and Mak, Man-Wai and Kawahara, Tatsuya},
   booktitle = {Proceedings of the 4th International Workshop on Multimodal, Generative and Responsible Affective Computing},
   year      = {2026},
-  doi       = {10.1145/3840474.3840521}
+  doi       = {10.1145/3840474.3840521},
+  eprint    = {2608.24730},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.MM},
+  url       = {https://arxiv.org/abs/2608.24730}
 }
 ```
 

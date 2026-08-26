@@ -2,7 +2,7 @@
 
 ## Dataset Description
 
-EAPO-EmoPrefer accompanies the paper *Learning to Prefer Reliably: Error-Augmented Emotion Preference Optimization with Calibrated Fusion*. It contains model-verified, controlled negative emotion descriptions constructed from human-preferred descriptions in [EmoPrefer](https://github.com/zeroQiaoba/AffectGPT/tree/master/EmoPrefer). Each negative differs from its preferred anchor through a constrained local edit designed to instantiate one predefined error type.
+EAPO-EmoPrefer accompanies the paper [*Learning to Prefer Reliably: Error-Augmented Emotion Preference Optimization with Calibrated Fusion*](https://arxiv.org/abs/2608.24730). It contains model-verified, controlled negative emotion descriptions constructed from human-preferred descriptions in [EmoPrefer](https://github.com/zeroQiaoba/AffectGPT/tree/master/EmoPrefer). Each negative differs from its preferred anchor through a constrained local edit designed to instantiate one predefined error type.
 
 The release is intended for preference-judge training, controlled error analysis, robustness evaluation, and research on multimodal emotion-description reliability.
 
