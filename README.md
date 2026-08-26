@@ -8,7 +8,7 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/Code%20License-MIT-blue.svg" alt="Code License: MIT"></a>
   <a href="DATA_LICENSE.md"><img src="https://img.shields.io/badge/Data%20License-CC%20BY--NC%204.0-blue.svg" alt="Data License: CC BY-NC 4.0"></a>
-  <a href="#citation"><img src="https://img.shields.io/badge/arXiv-coming%20soon-B31B1B.svg" alt="arXiv: coming soon"></a>
+  <a href="#citation"><img src="https://img.shields.io/badge/arXiv-coming%20soon-B31B1B.svg" alt="arXiv: 2608.24730"></a>
   <a href="https://github.com/slash1028/EAPO-EmoPrefer/stargazers"><img src="https://img.shields.io/github/stars/slash1028/EAPO-EmoPrefer?style=social" alt="GitHub Stars"></a>
 </p>
 
